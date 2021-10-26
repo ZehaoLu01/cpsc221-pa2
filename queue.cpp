@@ -15,6 +15,7 @@ void Queue<T>::enqueue(T const& newItem)
     /**
      * @todo Your code here!
      */
+    inStack.add(newItem);
 }
 
 /**
@@ -29,7 +30,13 @@ T Queue<T>::dequeue()
     /**
      * @todo Your code here! 
      */
-
+    if(outStack.isEmpty()){
+        while(!inStack.isEmpty()){
+             outStack.add(inStack.remove());
+        }
+    }
+    //Prevent inStack is also empty.
+    if(!outStack.isEmpty())return outStack.remove();
 }
 
 /**
@@ -44,7 +51,7 @@ void Queue<T>::add(const T& theItem)
      * @todo Your code here! Hint: this function should call a Queue
      *  function to add the element to the Queue.
      */
-
+    enqueue(theItem);
 }
 
 /**
@@ -59,6 +66,7 @@ T Queue<T>::remove()
      * @todo Your code here! Hint: this function should call a Queue
      *  function to remove an element from the Queue and return it. 
      */
+    dequeue();
 }
 
 /**
@@ -73,7 +81,15 @@ T Queue<T>::peek()
     /**
      * @todo Your code here! 
      */
+    if(outStack.isEmpty){
+         while(!inStack.isEmpty()){
+             outStack.add(inStack.remove());
+        }
+    }
+    //Prevent inStock is also empty.
+    if(!outStack.isEmpty())return outStack.peek();
 }
+
 
 /**
  * Determines if the Queue is empty.
@@ -86,5 +102,6 @@ bool Queue<T>::isEmpty() const
     /**
      * @todo Your code here! 
      */
-
+    if(inStack.isEmpty()&&outStack.isEmpty()) return true;
+    else return false;
 }
