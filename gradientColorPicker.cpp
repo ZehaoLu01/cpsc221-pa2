@@ -12,7 +12,7 @@
  */
 gradientColorPicker::gradientColorPicker(HSLAPixel fadeColor1,
                                          HSLAPixel fadeColor2, int radius,
-                                         int centerX, int centerY)
+                                         int centerX, int centerY): fadeColor1(fadeColor1), fadeColor2(fadeColor2),radius(radius),centerX(centerX),centerY(centerY)
 {
     /**
      * @todo Construct your gradientColorPicker here! You may find it
@@ -64,5 +64,26 @@ HSLAPixel gradientColorPicker::operator()(int x, int y)
      * @todo Return the correct color here!
      */
     
+    double dist=calDist(x,y);
+    if(dist<radius)
+    {
+        color.h=fadeColor1.h + (dist/radius) *  calColorDist(fadeColor1.h - fadeColor2.h);
+    }
+    else{
+        color.h=fadeColor2.h;
+    }
+    color.s=1;
+    color.l=0.5;
     return color;
+}
+
+double calDist(int x, int y){
+    return sqrt(pow(centerX-x,2)+pow(centerY-y,2));
+}
+
+//Calculate the largest distance, which ensure that the distance is larger than 180.
+double calColorDist(int h1,int h2){
+    int d=abs(h1-h2);
+    if(d>=180)return d;
+    else return 360-d;
 }

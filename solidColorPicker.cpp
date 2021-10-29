@@ -10,6 +10,7 @@ solidColorPicker::solidColorPicker(HSLAPixel fillColor)
     /**
      * @todo Initialize a new solidColorPicker here!
      */
+    this.fillColor=fillColor;
 }
 
 /**
@@ -23,5 +24,6 @@ HSLAPixel solidColorPicker::operator()(int x, int y)
     /**
      * @todo Return the appropriate color here! 
      */
+    return fillColor;
 
 }

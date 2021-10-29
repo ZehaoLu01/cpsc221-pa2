@@ -36,7 +36,9 @@ T Stack<T>::pop()
     /**
      * @todo Your code here! 
      */
+    T retval=myStack.front();
     myStack.pop_front();
+    return retval;
 }
 
 /**
@@ -66,8 +68,7 @@ T Stack<T>::remove()
      * @todo Your code here! Hint: this should call another Stack function
      *  to remove an element from the Stack and return it. 
      */
-    pop();
-
+    return pop();
 }
 
 /**

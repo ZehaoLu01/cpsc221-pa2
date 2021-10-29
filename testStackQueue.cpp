@@ -16,6 +16,7 @@ TEST_CASE("stack::basic functions","[weight=1][part=stack]"){
     }
     for (int i = 1; i <= 10; i++) {
         intStack.push(i);
+
     }
     //cout << intStack.peek() << endl;
     while (!intStack.isEmpty()) {

@@ -38,7 +38,8 @@ class solidColorPicker : public colorPicker
      * @todo Define any additional private member variables or helper
      *	functions here as you see fit.
      */
-
+    HSLAPixel fillColor;
+  
 };
 
 #endif

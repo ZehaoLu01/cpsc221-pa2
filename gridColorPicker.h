@@ -36,8 +36,8 @@ class gridColorPicker : public colorPicker
     virtual HSLAPixel operator()(int x, int y);
 
   private:
-    HSLAPixel color; /**< Color used for the grid border. */
-    int spacing;     /**< Spacing for cells in the grid. */
+    HSLAPixel gridColor; /**< Color used for the grid border. */
+    int gridSpacing;     /**< Spacing for cells in the grid. */
 };
 
 #endif

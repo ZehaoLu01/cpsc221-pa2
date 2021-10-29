@@ -37,6 +37,7 @@ T Queue<T>::dequeue()
     }
     //Prevent inStack is also empty.
     if(!outStack.isEmpty())return outStack.remove();
+    else return T();
 }
 
 /**
@@ -66,7 +67,7 @@ T Queue<T>::remove()
      * @todo Your code here! Hint: this function should call a Queue
      *  function to remove an element from the Queue and return it. 
      */
-    dequeue();
+    return dequeue();
 }
 
 /**
@@ -81,13 +82,14 @@ T Queue<T>::peek()
     /**
      * @todo Your code here! 
      */
-    if(outStack.isEmpty){
+    if(outStack.isEmpty()){
          while(!inStack.isEmpty()){
              outStack.add(inStack.remove());
         }
     }
     //Prevent inStock is also empty.
     if(!outStack.isEmpty())return outStack.peek();
+    else return T();
 }
 
 

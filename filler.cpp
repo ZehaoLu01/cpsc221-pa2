@@ -4,6 +4,12 @@
  *
  */
 //#include "filler.h"
+#include<set>
+#include<utility>
+
+double distance(int x1,int y1, int x2,int y2){
+    return sqrt(pow(x1-x2,2)+pow(y1-y2,2));
+}
 
 animation filler::fillSolidDFS(PNG& img, int x, int y, HSLAPixel fillColor,
                                  double tolerance, int frameFreq)
@@ -11,6 +17,8 @@ animation filler::fillSolidDFS(PNG& img, int x, int y, HSLAPixel fillColor,
     /**
      * @todo Your code here! 
      */
+    solidColorPicker picker(fillColor);
+    return fill<Stack>(img,x,y,picker,tolerance,frameFreq);
 }
 
 animation filler::fillGridDFS(PNG& img, int x, int y, HSLAPixel gridColor,
@@ -19,6 +27,8 @@ animation filler::fillGridDFS(PNG& img, int x, int y, HSLAPixel gridColor,
     /**
      * @todo Your code here! 
      */
+    gridColorPicker picker(gridColor,gridSpacing);
+    return fill<Stack>(img,x,y,picker,tolerance,frameFreq);
 
 }
 
@@ -29,6 +39,8 @@ animation filler::fillGradientDFS(PNG& img, int x, int y,
     /**
      * @todo Your code here! 
      */
+    gradientColorPicker picker(fadeColor1,fadeColor2,radius,x,y);
+    return fill<Stack>(img,x,y,picker,tolerance,frameFreq);
 
 }
 
@@ -50,6 +62,8 @@ animation filler::fillSolidBFS(PNG& img, int x, int y, HSLAPixel fillColor,
     /**
      * @todo Your code here! 
      */
+    solidColorPicker picker(fillColor);
+    return fill<Queue>(img,x,y,picker,tolerance,frameFreq);
 }
 
 animation filler::fillGridBFS(PNG& img, int x, int y, HSLAPixel gridColor,
@@ -58,6 +72,8 @@ animation filler::fillGridBFS(PNG& img, int x, int y, HSLAPixel gridColor,
     /**
      * @todo Your code here! 
      */
+    gridColorPicker picker(gridColor,gridSpacing);
+    return fill<Queue>(img,x,y,picker,tolerance,frameFreq);
 }
 
 animation filler::fillGradientBFS(PNG& img, int x, int y,
@@ -67,6 +83,8 @@ animation filler::fillGradientBFS(PNG& img, int x, int y,
     /**
      * @todo Your code here! 
      */
+    gradientColorPicker picker(fadeColor1,fadeColor2,radius,x,y);
+    return fill<Queue>(img,x,y,picker,tolerance,frameFreq);
 }
 
 animation filler::fillRainBFS(PNG& img, int x, int y,
@@ -80,7 +98,7 @@ animation filler::fillRainBFS(PNG& img, int x, int y,
 }
 
 template <template <class T> class OrderingStructure>
-animation filler::fill(PNG& img, int x, int y, colorPicker& fillColor,
+animation filler::fill(PNG& img, int x, int y, colorPicker& cp,
                        double tolerance, int frameFreq)
 {
     /**
@@ -154,5 +172,53 @@ animation filler::fill(PNG& img, int x, int y, colorPicker& fillColor,
      *        animation. This frame will be the final result of the 
      *        fill, and it will be the one we test against.
      */
-
+    animation ret;
+    std::set<std::pair<int,int>> pset;
+    OrderingStructure<std::pair<int,int>> container;
+    //Insert the first element
+    HSLAPixel point = (cp(x,y))
+    (*img.getPixel(x,y))(point.h,point.s,point.l);
+    container.add(std::pair<int,int>(x,y));
+    pset.insert(std::pair<int,int>(x,y));
+    ret.addFrame(img);
+    
+    int count=0;
+    while(!container.isEmpty()){
+        std::pair<int,int> point = container.remove();
+        int ox=point.first;
+        int oy=point.second;
+        // Add neighbour point to the container if they are not processed and with in the tolerance.
+        if(pset.find(std::pair<int,int>(ox+1,oy))!=pset.end()&&distance(ox+1,oy,x,y)<=tolerance){
+            HSLAPixel pt = cp(ox+1,oy);
+            (*img.getPixel(ox+1,oy))=HSLAPixel(pt);
+            container.add(std::pair<int,int>(ox+1,oy));
+            pset.insert(std::pair<int,int>(ox+1,oy));
+        } 
+        if(pset.find(std::pair<int,int>(ox,oy+1))!=pset.end()&&distance(ox,oy+1,x,y)<=tolerance){
+            HSLAPixel pt = cp(ox,oy+1);
+            (*img.getPixel(ox,oy+1))=HSLAPixel(pt);
+            container.add(std::pair<int,int>(ox,oy+1));
+            pset.insert(std::pair<int,int>(ox,oy+1));
+        } 
+        if(pset.find(std::pair<int,int>(ox-1,oy))!=pset.end()&&distance(ox-1,oy,x,y)<=tolerance){
+            HSLAPixel pt = cp(ox-1,oy);
+            (*img.getPixel(ox-1,y))=HSLAPixel(pt);
+            container.add(std::pair<int,int>(ox-1,oy));
+            pset.insert(std::pair<int,int>(ox-1,oy));
+        }    
+        if(pset.find(std::pair<int,int>(ox,oy-1))!=pset.end()&&distance(ox,oy-1,x,y)<=tolerance){
+            HSLAPixel pt = cp(ox,oy-1);
+            (*img.getPixel(ox,oy-1))=HSLAPixel(pt);
+            container.add(std::pair<int,int>(ox,oy-1));
+            pset.insert(std::pair<int,int>(ox,oy-1));
+        }      
+        count++;
+        if(count==frameFreq){
+            ret.addFrame(img);
+            count=0;
+        }
+    }
+    ret.addFrame(img);
+    
+    return ret;
 } 
